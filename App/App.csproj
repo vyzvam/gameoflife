@@ -130,6 +130,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Handles\CellHandle.cs" />
+    <Compile Include="Handles\GridHandle.cs" />
+    <Compile Include="Handles\LifeHandle.cs" />
     <Compile Include="Models\Cell.cs" />
     <Compile Include="Models\Grid.cs" />
     <Compile Include="Models\Life.cs" />
