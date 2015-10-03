@@ -1,4 +1,5 @@
 ﻿using App.Models;
+using App.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -154,5 +155,25 @@ namespace App.Handles
             return groupCells;
         }
 
+        public void DecideCellFate(Grid targetGrid, Grid SourceGrid, Cell sourceCell)
+        {
+            var sourceCellGroup = GetCellGroup(SourceGrid.Cells, sourceCell);
+
+            Cell targetCell = targetGrid.Cells.FirstOrDefault(m => m.Equals(sourceCell));
+
+            if (Rules.IsItAlive(sourceCell))
+            {
+                if (Rules.IsToKill(sourceCellGroup, sourceCell))
+                {
+                    cellHandle.Kill(targetCell);
+                }
+
+            }
+            else if (Rules.IsToGiveLife(sourceCellGroup, sourceCell))
+            {
+                cellHandle.Enliven(targetCell);
+            }
+
+        }
     }
 }

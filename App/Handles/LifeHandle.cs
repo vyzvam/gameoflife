@@ -17,6 +17,96 @@ namespace App.Handles
 
         private readonly GridHandle GridHandle;
 
+        public LifeHandle(int maxGen = int.MaxValue, int interval = 50, int gridXSize = 20, int gridYSize = 20)
+        {
+            life = new Life(gridXSize, gridYSize);
+            Interval = interval;
+            MaxGenerations = maxGen;
+            GridHandle = new GridHandle();
+        }
+
+        public void StartLife()
+        {
+            PrepareEnvironment();
+        }
+
+        public void StartPopulation(IEnumerable<Cell> cells = null)
+        {
+            if (cells == null)
+            {
+                cells = GridHandle.GetAcorn();
+            }
+
+            GridHandle.Populate(life.CurrentGeneration, cells);
+            GridHandle.Populate(life.ProxyGeneration, cells);
+        }
+
+        public void PrepareEnvironment()
+        {
+            GridHandle.PrepareGrid(life.CurrentGeneration);
+            GridHandle.PrepareGrid(life.ProxyGeneration);
+        }
+
+        public void StartLifeCycle()
+        {
+            PrepareEnvironment();
+            StartPopulation(GridHandle.GetGlider());
+            Evolve();
+        }
+
+        public void Evolve()
+        {
+            ShowCurrentGeneration();
+            for (GenerationCounter = 1; GenerationCounter < MaxGenerations; GenerationCounter++)
+            {
+                AdvanceGeneration();
+                ShowCurrentGeneration();
+                System.Threading.Thread.Sleep(Interval);
+            }
+        }
+
+
+
+
+        public Grid getCurrentGeneration()
+        {
+
+            return life.CurrentGeneration;
+        }
+
+        public IEnumerable<Cell> GetCurrentGenerationCells()
+        {
+            return GridHandle.GetCellsCopy(life.CurrentGeneration);
+        }
+
+        public void ShowCurrentGeneration()
+        {
+            Console.Clear();
+            //Console.WriteLine(Environment.NewLine);
+            Console.WriteLine("Current Generation: {0}, Total Living Cells : {1}", GenerationCounter, life.CurrentGeneration.Cells.Count(m => m.Status.Equals((byte)LifeState.Alive)));
+            var grid = GetCurrentGenerationCells();
+
+            foreach (var cell in grid)
+            {
+                if (cell.X.Equals(0)) { Console.WriteLine(Environment.NewLine); }
+
+                Console.Write((cell.Status.Equals((byte)LifeState.Alive)) ? "0" : " ");
+
+            }
+
+        }
+
+        public void AdvanceGeneration()
+        {
+            Parallel.ForEach(life.CurrentGeneration.Cells, (cell) =>
+            {
+
+                GridHandle.DecideCellFate(life.ProxyGeneration, life.CurrentGeneration, cell);
+            });
+
+            GridHandle.CopyGenerationCells(life.CurrentGeneration, life.ProxyGeneration);
+        }
+
 
     }
 }
