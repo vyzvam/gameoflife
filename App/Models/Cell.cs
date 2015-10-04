@@ -10,7 +10,8 @@ namespace App.Models
     {
         Unknown = 0,
         Alive = 1,
-        Dead = 2
+        Dead = 2,
+        Undead = 3
     }
 
     public class Cell
@@ -26,10 +27,56 @@ namespace App.Models
             Status = status;
         }
 
-        public Cell (int x, int y, byte status = (byte)LifeState.Unknown) : this(status)
+        public Cell(int x, int y, byte status = (byte)LifeState.Unknown)
+            : this(status)
         {
             X = x;
             Y = y;
+        }
+
+
+        public static bool operator ==(Cell a, Cell b)
+        {
+            if (object.ReferenceEquals(a, null))
+            {
+                if (object.ReferenceEquals(b, null)) { return true; }
+                else { return false; }
+            }
+            else if (object.ReferenceEquals(b, null))
+            {
+                if (object.ReferenceEquals(a, null)) { return true; }
+                else { return false; }
+            }
+            else
+            {
+                return a.X == b.X && a.Y == b.Y;
+            }
+        }
+
+        public static bool operator !=(Cell a, Cell b)
+        {
+            return !(a == b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) { return false; }
+
+            if (!(obj is Cell)) { return false; }
+
+            Cell p = (Cell)obj;
+
+            return p == this;
+        }
+
+        public bool Equals(Cell a)
+        {
+            return this == a;
+        }
+
+        public override int GetHashCode()
+        {
+            return X ^ Y;
         }
 
     }
