@@ -10,7 +10,16 @@
 <body>
     @RenderBody()
 
+
+    @if (IsSectionDefined("Content"))
+    {
+        @RenderSection("Content")
+
+    }
+
+
     @Scripts.Render("~/bundles/jquery")
-    @RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/life")
+
 </body>
 </html>
