@@ -14,6 +14,7 @@ var GameOfLife = {
             pixelSize: 10,
             lineWidth: 0.3,
             strokeColor: '#aaa',
+            defaultFillColor: '#fff',
             lifeFillColor: '#fff',
             zombieFillColor: '#f00'
         },
@@ -127,7 +128,8 @@ var GameOfLife = {
 
     renderGrid: function() {
 
-        var canvas = $(this.config.canvas).get(0),
+        var self = this,
+            canvas = $(this.config.canvas).get(0),
             context = canvas.getContext("2d"),
             grid = this.config.grid
         ;
@@ -135,13 +137,28 @@ var GameOfLife = {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
+        
+
+        if (this.config.cells != null) {
+            $.each(self.config.cells, function () {
+
+                context.fillStyle = self.config.grid.defaultFillColor;
+
+                if (this.Status == 1) { context.fillStyle = self.config.grid.lifeFillColor; }
+                if (this.Status == 3) { context.fillStyle = self.config.grid.zombieFillColor; }
+
+                context.fillRect((this.X * grid.pixelSize), (this.Y * grid.pixelSize), grid.pixelSize, grid.pixelSize);
+
+            });
+        }
+
+
         //context.save();
         context.lineWidth = grid.lineWidth;
         context.strokeStyle = grid.strokeColor;
 
         // X axis grid lines
-        for(var x = 0; x <= canvas.height; x += grid.pixelSize)
-        {
+        for (var x = 0; x <= canvas.height; x += grid.pixelSize) {
             context.beginPath();
             context.moveTo(0, x);
             context.lineTo(canvas.width, x);
@@ -150,21 +167,13 @@ var GameOfLife = {
         }
 
         // Y axis grid lines
-        for(var y = 0; y <= canvas.width; y += grid.pixelSize)
-        {
+        for (var y = 0; y <= canvas.width; y += grid.pixelSize) {
             context.beginPath();
             context.moveTo(y, 0);
             context.lineTo(y, canvas.height);
             context.closePath();
             context.stroke();
         }
-
-        if (this.config.cells != null) {
-            $.each(this.config.cells, function () {
-                context.fillRect((this.X * grid.pixelSize), (this.Y * grid.pixelSize), grid.pixelSize, grid.pixelSize);
-            });
-        }
-
         //context.restore();
     }
 
