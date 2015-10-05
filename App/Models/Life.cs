@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace App.Models
 {
+    /// <summary>
+    /// Model / container class that holds the grid model (generation transition),
+    /// which in turn holds the cells data
+    /// </summary>
     public class Life
     {
         public Grid CurrentGeneration { get; set; }

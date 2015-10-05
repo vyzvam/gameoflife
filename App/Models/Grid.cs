@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace App.Models
 {
+    /// <summary>
+    /// Model / Container class that holds details about a grid and all the cells within the grid
+    /// </summary>
     public class Grid
     {
         public int MaxWidth { get; set; }

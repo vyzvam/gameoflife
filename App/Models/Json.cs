@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace MvcApplication1.Models
+namespace App.Models
 {
+    /// <summary>
+    /// ViewModel that is used for data exchange with the view
+    /// </summary>
     public class LifeSettings
     {
         public int interval { get; set; }

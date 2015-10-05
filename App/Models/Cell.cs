@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.Models
 {
+    /// <summary>
+    /// An enumerator to easily track status of cells
+    /// </summary>
     public enum LifeState
     {
         Unknown = 0,
@@ -14,6 +17,9 @@ namespace App.Models
         Undead = 3
     }
 
+    /// <summary>
+    /// Model / Container class that holds details about a cell
+    /// </summary>
     public class Cell
     {
         public int X { get; set; }

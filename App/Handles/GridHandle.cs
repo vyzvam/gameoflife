@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 namespace App.Handles
 {
 
+    /// <summary>
+    /// Handler class that handles the grid object
+    /// </summary>
     public class GridHandle
     {
         private readonly CellHandle cellHandle;
@@ -18,6 +21,11 @@ namespace App.Handles
             cellHandle = new CellHandle();
         }
 
+
+        /// <summary>
+        /// processes the grid settings and populates intial cell data
+        /// </summary>
+        /// <param name="grid">Grid Object to be manipulated</param>
         public void PrepareGrid(Grid grid)
         {
 
@@ -37,36 +45,60 @@ namespace App.Handles
 
         }
 
+        /// <summary>
+        /// Sets tiny width and height of a grid dynamically
+        /// </summary>
+        /// <param name="grid">Grid Object to be manipulated</param>
         public void SetTinySpace(Grid grid)
         {
             grid.MaxWidth = int.MaxValue / 10000000;
             grid.MaxHeight = int.MaxValue / 10000000;
         }
 
+        /// <summary>
+        /// Sets small width and height of a grid dynamically
+        /// </summary>
+        /// <param name="grid">Grid Object to be manipulated</param>
         public void SetSmallSpace(Grid grid)
         {
             grid.MaxWidth = int.MaxValue / 1000000;
             grid.MaxHeight = int.MaxValue / 1000000;
         }
 
+        /// <summary>
+        /// Sets medium width and height of a grid dynamically
+        /// </summary>
+        /// <param name="grid">Grid Object to be manipulated
         public void SetMediumSpace(Grid grid)
         {
             grid.MaxWidth = int.MaxValue / 100000;
             grid.MaxHeight = int.MaxValue / 100000;
         }
 
+        /// <summary>
+        /// Sets large width and height of a grid dynamically
+        /// </summary>
+        /// <param name="grid">Grid Object to be manipulated
         public void SetLargeSpace(Grid grid)
         {
             grid.MaxWidth = int.MaxValue / 10000;
             grid.MaxHeight = int.MaxValue / 10000;
         }
 
+        /// <summary>
+        /// Sets huge width and height of a grid dynamically
+        /// </summary>
+        /// <param name="grid">Grid Object to be manipulated
         public void SetHugeSpace(Grid grid)
         {
             grid.MaxWidth = int.MaxValue / 1000;
             grid.MaxHeight = int.MaxValue / 1000;
         }
 
+        /// <summary>
+        /// Creates a collection of cells based on the Glider pattern 
+        /// </summary>
+        /// <returns>returns a collection of cells</returns>
         public ICollection<Cell> GetGlider()
         {
             byte status = (byte)LifeState.Alive;
@@ -79,6 +111,10 @@ namespace App.Handles
             };
         }
 
+        /// <summary>
+        /// Creates 2 collections of cells based on the Glider pattern 
+        /// </summary>
+        /// <returns>returns a collection of cells</returns>
         public ICollection<Cell> GetDoubleGlider()
         {
             byte status = (byte)LifeState.Alive;
@@ -97,6 +133,10 @@ namespace App.Handles
             };
         }
 
+        /// <summary>
+        /// Creates a collection of cells based on the Acorn pattern 
+        /// </summary>
+        /// <returns>returns a collection of cells</returns>
         public ICollection<Cell> GetAcorn()
         {
             byte status = (byte)LifeState.Alive;
@@ -111,6 +151,12 @@ namespace App.Handles
             };
         }
 
+
+        /// <summary>
+        /// changes the status of cells of a grid based on a set of cells provided
+        /// </summary>
+        /// <param name="grid">Grid Object to be manipulated</param>
+        /// <param name="cells">collection of cells to be used for validation</param>
         public void Populate(Grid grid, IEnumerable<Cell> cells)
         {
             Parallel.ForEach(cells, (item) =>
@@ -130,6 +176,11 @@ namespace App.Handles
 
 
 
+        /// <summary>
+        /// creates a new collection of cells (cloned)
+        /// </summary>
+        /// <param name="grid">Grid Object to be validated against</param>
+        /// <returns>enumerations of cells after validation</returns>
         public IEnumerable<Cell> GetCellsCopy(Grid grid)
         {
             ConcurrentBag<Cell> cellsToShow = new ConcurrentBag<Cell>();
@@ -141,6 +192,11 @@ namespace App.Handles
 
         }
 
+        /// <summary>
+        /// replaces collection of cells supplied to the function
+        /// </summary>
+        /// <param name="targetGrid">Grid Object to be manipulated</param>
+        /// <param name="sourceGrid">Grid Object to be validated against</param>
         public void CopyGenerationCells(Grid targetGrid, Grid sourceGrid)
         {
             targetGrid.Cells = new ConcurrentBag<Cell>();
@@ -148,6 +204,12 @@ namespace App.Handles
 
         }
 
+        /// <summary>
+        /// replaces collection of cells supplied to the function
+        /// </summary>
+        /// <param name="cells">all cells from a grid</param>
+        /// <param name="cell">selected cell</param>
+        /// <returns>returns a thread-safe collection of cells (adjacent cells)</returns>
         private ConcurrentBag<Cell> GetCellGroup(ConcurrentBag<Cell> cells, Cell cell)
         {
 
@@ -166,9 +228,15 @@ namespace App.Handles
             return groupCells;
         }
 
-        public void DecideCellFate(Grid targetGrid, Grid SourceGrid, Cell sourceCell, bool isToZombify = false)
+        /// <summary>
+        /// Changes the current status of a cell based on a set of applied rules
+        /// </summary>
+        /// <param name="targetGrid">Grid Object to be manipulated</param>
+        /// <param name="sourceGrid">Grid Object to be validated against</param>
+        /// <param name="isToZombify">a paramenter that determines a change in the rule</param>
+        public void DecideCellFate(Grid targetGrid, Grid sourceGrid, Cell sourceCell, bool isToZombify = false)
         {
-            var sourceCellGroup = GetCellGroup(SourceGrid.Cells, sourceCell);
+            var sourceCellGroup = GetCellGroup(sourceGrid.Cells, sourceCell);
 
             Cell targetCell = targetGrid.Cells.FirstOrDefault(m => m.Equals(sourceCell));
 

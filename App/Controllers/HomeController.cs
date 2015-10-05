@@ -1,15 +1,18 @@
-﻿using App.Handles;
-using App.Models;
-using App.ViewModels;
-using MvcApplication1.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using App.Handles;
+using App.Models;
+using App.ViewModels;
 
 namespace App.Controllers
 {
+
+    /// <summary>
+    /// The default and the only controller used.
+    /// </summary>
     public class HomeController : Controller
     {
         LifeHandle LifeHandle;
@@ -18,12 +21,24 @@ namespace App.Controllers
         {
             LifeHandle = new LifeHandle();
         }
-        
+
+        /// <summary>
+        /// The Default action that loads the initial view file
+        /// all adds, updates and deletes
+        /// </summary>
         public ActionResult Index()
         {
             return View(new SettingsViewModel());
         }
 
+        /// <summary>
+        /// The Default action that loads the initial view file
+        /// all adds, updates and deletes
+        /// </summary>
+        /// <param name="settings">
+        /// the viewModel used here for the purpose of setting the grid values on the view
+        /// </param>
+        /// <returns>Json data for the ajax call from the view</returns>
         public JsonResult GetGridSettings(SettingsViewModel settings)
         {
 
@@ -37,6 +52,14 @@ namespace App.Controllers
         }
 
 
+        /// <summary>
+        /// the main action where all the cell evaluation is done. This function 
+        /// accepts the current state of the cells and returns the new state based on the rules specified
+        /// </summary>
+        /// <param name="settings">
+        /// the viewModel used here for the purpose transferring cell data and idenfifing setting change
+        /// </param>
+        /// <returns>Json data for the ajax call from the view</returns>
         public JsonResult GetGenerationData(SettingsViewModel settings)
         {
             LifeHandle.StartLife();
