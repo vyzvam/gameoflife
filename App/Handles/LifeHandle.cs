@@ -68,8 +68,7 @@ namespace App.Handles
 
 
 
-        public Grid getCurrentGeneration()
-        {
+        public Grid getCurrentGeneration() {
 
             return life.CurrentGeneration;
         }
