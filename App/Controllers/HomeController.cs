@@ -45,10 +45,10 @@ namespace App.Controllers
             {
                 string _cells = settings.Cells.Replace(@"\", string.Empty);
                 var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-                var liveCells = serializer.Deserialize<IEnumerable<Cell>>(_cells);
+                var cells = serializer.Deserialize<IEnumerable<Cell>>(_cells);
 
-                LifeHandle.StartPopulation(0, liveCells);
-                LifeHandle.AdvanceGeneration();
+                LifeHandle.StartPopulation(0, cells);
+                LifeHandle.AdvanceGeneration(settings.IsToZombify);
             }
             else
             {
@@ -56,7 +56,8 @@ namespace App.Controllers
             }
 
             var grid = LifeHandle.getCurrentGeneration();
-            var jsonCells = grid.Cells.Where(m => m.Status.Equals((byte)LifeState.Alive));
+            //var jsonCells = grid.Cells.Where(m => m.Status.Equals((byte)LifeState.Alive));
+            var jsonCells = grid.Cells;
 
             return Json(jsonCells);
         }

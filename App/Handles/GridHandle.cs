@@ -69,52 +69,63 @@ namespace App.Handles
 
         public ICollection<Cell> GetGlider()
         {
+            byte status = (byte)LifeState.Alive;
             return new List<Cell>() {
-                new Cell(5, 5),
-                new Cell (6, 6),
-                new Cell(4, 7),
-                new Cell(5, 7),
-                new Cell(6, 7),
+                new Cell(5, 5, status),
+                new Cell (6, 6, status),
+                new Cell(4, 7, status),
+                new Cell(5, 7, status),
+                new Cell(6, 7, status)
             };
         }
 
         public ICollection<Cell> GetDoubleGlider()
         {
+            byte status = (byte)LifeState.Alive;
             return new List<Cell>() {
-                new Cell(4, 5),
-                new Cell (5, 6),
-                new Cell(3, 7),
-                new Cell(4, 7),
-                new Cell(5, 7),
+                new Cell(4, 5, status),
+                new Cell (5, 6, status),
+                new Cell(3, 7, status),
+                new Cell(4, 7, status),
+                new Cell(5, 7, status),
 
-                new Cell(9, 5),
-                new Cell (10, 6),
-                new Cell(8, 7),
-                new Cell(9, 7),
-                new Cell(10, 7),
+                new Cell(9, 5, status),
+                new Cell (10, 6, status),
+                new Cell(8, 7, status),
+                new Cell(9, 7, status),
+                new Cell(10, 7, status)
             };
         }
 
         public ICollection<Cell> GetAcorn()
         {
+            byte status = (byte)LifeState.Alive;
             return new List<Cell>() {
-                new Cell(5, 5),
-                new Cell (7, 6),
-                new Cell(4, 7),
-                new Cell(5, 7),
-                new Cell(8, 7),
-                new Cell(9, 7),
-                new Cell(10, 7),
+                new Cell(5, 5, status),
+                new Cell (7, 6, status),
+                new Cell(4, 7, status),
+                new Cell(5, 7, status),
+                new Cell(8, 7, status),
+                new Cell(9, 7, status),
+                new Cell(10, 7, status),
             };
         }
 
-        public void Populate(Grid grid, IEnumerable<Cell> liveCells)
+        public void Populate(Grid grid, IEnumerable<Cell> cells)
         {
-            foreach (var item in liveCells)
+            Parallel.ForEach(cells, (item) =>
             {
-                var cell = grid.Cells.FirstOrDefault(m => m.Equals(item));
-                if (cell != null) { cellHandle.Enliven(cell); }
-            }
+                var targetCell = grid.Cells.FirstOrDefault(m => m.Equals(item));
+                if (targetCell != null)
+                {
+
+                    if (Rules.IsItAlive(item)) { cellHandle.Enliven(targetCell); }
+                    else if (Rules.IsItDead(item)) { cellHandle.Kill(targetCell); }
+                    else if (Rules.IsItUnDead(item)) { cellHandle.Resurrect(targetCell); }
+
+                }
+            });
+
         }
 
 
@@ -155,7 +166,7 @@ namespace App.Handles
             return groupCells;
         }
 
-        public void DecideCellFate(Grid targetGrid, Grid SourceGrid, Cell sourceCell)
+        public void DecideCellFate(Grid targetGrid, Grid SourceGrid, Cell sourceCell, bool isToZombify = false)
         {
             var sourceCellGroup = GetCellGroup(SourceGrid.Cells, sourceCell);
 
@@ -173,6 +184,24 @@ namespace App.Handles
             {
                 cellHandle.Enliven(targetCell);
             }
+
+            if (isToZombify)
+            {
+                if (Rules.IsItAlive(sourceCell))
+                {
+                    if (Rules.HasUndeadNeighbour(sourceCellGroup, sourceCell))
+                    {
+                        cellHandle.Kill(targetCell);
+                    }
+
+                }
+
+                else if (Rules.IsItDead(sourceCell))
+                {
+                    cellHandle.Resurrect(targetCell);
+                }
+            }
+
 
         }
     }

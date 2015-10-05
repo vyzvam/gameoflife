@@ -11,16 +11,18 @@
 
         <form action="@Url.Action("GetGenerationData")" method="post" id="settings-form">
 
-            @Html.HiddenFor(m => m.Cells, new { id = "form-cells" });
+            @Html.HiddenFor(m => m.Cells, new { id = "form-cells" })
 
-            @Html.Label("Choose Pattern :");
+            @Html.Label("Choose Pattern :")
             @Html.DropDownListFor(m => m.patternTypeId, new SelectList(Model.patternTypes, "Key", "Value"), new { id = "pattern-type" })
 
-            @Html.CheckBoxFor(m => m.IsToZombify)
-            @Html.Label("Zombify!");
 
             <button type="button" data-state="0" id="play-button">Start!</button>
             <button type="button" id="reset-button">Reset!</button>
+
+            @Html.CheckBoxFor(m => m.IsToZombify)
+            @Html.Label("Zombify! Select at your own risk!", new {style = "color:red" })
+            
         </form>
 
         <canvas id="canvas-test" width="500" height="500">

@@ -15,7 +15,7 @@ var GameOfLife = {
             lineWidth: 0.3,
             strokeColor: '#aaa',
             defaultFillColor: '#fff',
-            lifeFillColor: '#fff',
+            lifeFillColor: '#000',
             zombieFillColor: '#f00'
         },
         cells : null
@@ -144,8 +144,12 @@ var GameOfLife = {
 
                 context.fillStyle = self.config.grid.defaultFillColor;
 
-                if (this.Status == 1) { context.fillStyle = self.config.grid.lifeFillColor; }
-                if (this.Status == 3) { context.fillStyle = self.config.grid.zombieFillColor; }
+                if (this.Status == 1) {
+                    context.fillStyle = self.config.grid.lifeFillColor;
+                }
+                if (this.Status == 3) {
+                    context.fillStyle = self.config.grid.zombieFillColor;
+                }
 
                 context.fillRect((this.X * grid.pixelSize), (this.Y * grid.pixelSize), grid.pixelSize, grid.pixelSize);
 

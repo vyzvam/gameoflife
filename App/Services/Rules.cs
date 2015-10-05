@@ -16,6 +16,16 @@ namespace App.Services
             return cell.Status.Equals((byte)LifeState.Alive);
         }
 
+        public static bool IsItDead(Cell cell)
+        {
+            return cell.Status.Equals((byte)LifeState.Dead);
+        }
+
+        public static bool IsItUnDead(Cell cell)
+        {
+            return cell.Status.Equals((byte)LifeState.Undead);
+        }
+
         public static bool IsToKill(ConcurrentBag<Cell> cellGroup, Cell cell)
         {
             return !HasTwoOrThreeNeighbours(cellGroup, cell);
@@ -59,6 +69,20 @@ namespace App.Services
             return cellGroup.Where(m => !m.Equals(cell)).Count(m => m.Status.Equals((byte)LifeState.Alive));
 
         }
+
+        public static bool HasUndeadNeighbour(ConcurrentBag<Cell> cellGroup, Cell cell)
+        {
+
+            int neighboursCount = GetUndeadNeighbours(cellGroup, cell);
+            return (neighboursCount.Equals(3)) ? true : false;
+        }
+
+        private static int GetUndeadNeighbours(ConcurrentBag<Cell> cellGroup, Cell cell)
+        {
+            return cellGroup.Where(m => !m.Equals(cell)).Count(m => m.Status.Equals((byte)LifeState.Undead));
+
+        }
+
 
     }
 }

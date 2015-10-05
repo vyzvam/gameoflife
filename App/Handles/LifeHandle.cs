@@ -17,7 +17,7 @@ namespace App.Handles
 
         private readonly GridHandle GridHandle;
 
-        public LifeHandle(int maxGen = int.MaxValue, int interval = 50, int gridXSize = 20, int gridYSize = 20)
+        public LifeHandle(int maxGen = int.MaxValue, int interval = 50, int gridXSize = 30, int gridYSize = 30)
         {
             life = new Life(gridXSize, gridYSize);
             Interval = interval;
@@ -61,7 +61,7 @@ namespace App.Handles
             ShowCurrentGeneration();
             for (GenerationCounter = 1; GenerationCounter < MaxGenerations; GenerationCounter++)
             {
-                AdvanceGeneration();
+                AdvanceGeneration(false);
                 ShowCurrentGeneration();
                 System.Threading.Thread.Sleep(Interval);
             }
@@ -84,25 +84,25 @@ namespace App.Handles
         {
             Console.Clear();
             //Console.WriteLine(Environment.NewLine);
-            Console.WriteLine("Current Generation: {0}, Total Living Cells : {1}", GenerationCounter, life.CurrentGeneration.Cells.Count(m => m.Status.Equals((byte)LifeState.Alive)));
+            Console.WriteLine("Current Generation: {0}, Total Living Cells : {1}", GenerationCounter, life.CurrentGeneration.Cells.Count(m => m.Status.Equals((byte)LifeState.Alive) || m.Status.Equals((byte)LifeState.Undead)));
             var grid = GetCurrentGenerationCells();
 
             foreach (var cell in grid)
             {
                 if (cell.X.Equals(0)) { Console.WriteLine(Environment.NewLine); }
 
-                Console.Write((cell.Status.Equals((byte)LifeState.Alive)) ? "0" : " ");
+                Console.Write((cell.Status.Equals((byte)LifeState.Alive) || cell.Status.Equals((byte)LifeState.Undead)) ? "0" : " ");
 
             }
 
         }
 
-        public void AdvanceGeneration()
+        public void AdvanceGeneration(bool isToZombify)
         {
             Parallel.ForEach(life.CurrentGeneration.Cells, (cell) =>
             {
 
-                GridHandle.DecideCellFate(life.ProxyGeneration, life.CurrentGeneration, cell);
+                GridHandle.DecideCellFate(life.ProxyGeneration, life.CurrentGeneration, cell, isToZombify);
             });
 
             GridHandle.CopyGenerationCells(life.CurrentGeneration, life.ProxyGeneration);

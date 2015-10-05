@@ -20,6 +20,8 @@ namespace App.Handles
 
         public void Enliven(Cell cell) { ChangeStatus(cell, LifeState.Alive); }
 
+        public void Resurrect(Cell cell) { ChangeStatus(cell, LifeState.Undead); }
+
         private void ChangeStatus(Cell cell, LifeState state) { cell.Status = (byte)state; }    
     }
 }
