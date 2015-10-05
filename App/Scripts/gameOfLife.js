@@ -1,3 +1,8 @@
+
+/**
+ * GameOfLife Literal that holds the variables and functions
+ * @type {Object}
+ */
 var GameOfLife = {
     config: {
         settingsForm: {
@@ -21,12 +26,18 @@ var GameOfLife = {
         cells : null
     },
 
+    /**
+     * Initializes the object with the required settings
+     */
     init: function() {
         this.getGridSettings();
         this.bindEvents();
 
     },
 
+    /**
+     * Binds all the events required for the user interaction
+     */
     bindEvents: function () {
 
         $doc = $(document);
@@ -34,6 +45,9 @@ var GameOfLife = {
         $doc.on('click', this.config.settingsForm.resetButton, this.resetLife);
     },
 
+    /**
+     * Gets the default settings of the grid from server and sets up the grid
+     */
     getGridSettings: function () {
         var self = this;
 
@@ -52,6 +66,9 @@ var GameOfLife = {
         })
     },
 
+    /**
+     * Plays / Pauses the simulation based on the event being triggered
+     */
     playLife: function () {
 
         var $button = $(this.config.settingsForm.startButton);
@@ -71,10 +88,16 @@ var GameOfLife = {
 
     },
 
+    /**
+     * Resets the grid, or more appropriately reloads the site
+     */
     resetLife: function () {
         location.reload();
     },
 
+    /**
+     * Gets the next generation data depending on the recursive condition
+     */
     getDataFromServer: function () {
         var self = this,
             form = self.config.settingsForm.id,
@@ -111,7 +134,10 @@ var GameOfLife = {
 
     },
 
-
+    /**
+     * Sets up the grid
+     * @param  {object} settings grid settings
+     */
     setupGrid: function (settings) {
 
         var canvas = $(this.config.canvas).get(0)
@@ -126,6 +152,9 @@ var GameOfLife = {
 
     },
 
+    /**
+     * renders the grid on a canvas based on the processed data stored in config
+     */
     renderGrid: function() {
 
         var self = this,
