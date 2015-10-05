@@ -1,8 +1,27 @@
-﻿
+﻿@using App.ViewModels;
+
+@model SettingsViewModel
+
 @section Content {
 
     <div align="center">
+
+
         <h1>Conway's Game of Life</h1>
+
+        <form action="@Url.Action("GetGenerationData")" method="post" id="settings-form">
+
+            @Html.HiddenFor(m => m.Cells, new { id = "form-cells" });
+
+            @Html.Label("Choose Pattern :");
+            @Html.DropDownListFor(m => m.patternTypeId, new SelectList(Model.patternTypes, "Key", "Value"), new { id = "pattern-type" })
+
+            @Html.CheckBoxFor(m => m.IsToZombify)
+            @Html.Label("Zombify!");
+
+            <button type="button" data-state="0" id="play-button">Start!</button>
+            <button type="button" id="reset-button">Reset!</button>
+        </form>
 
         <canvas id="canvas-test" width="500" height="500">
             <p>Canvas not supported by this browser.</p>

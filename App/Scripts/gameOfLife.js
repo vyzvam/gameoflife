@@ -1,20 +1,36 @@
 var GameOfLife = {
     config: {
+        settingsForm: {
+            id: '#settings-form',
+            startButton: '#play-button',
+            resetButton: '#reset-button',
+            cells: '#form-cells'
+        },
         canvas: '#canvas-test',
         intervalCounter: 0,
         intervals: 2,
+        isToStop: false,
         grid: {
             pixelSize: 10,
             lineWidth: 0.3,
-            strokeColor: '#aaa'
+            strokeColor: '#aaa',
+            lifeFillColor: '#fff',
+            zombieFillColor: '#f00'
         },
         cells : null
     },
 
     init: function() {
         this.getGridSettings();
-        this.getDataFromServer();
+        this.bindEvents();
 
+    },
+
+    bindEvents: function () {
+
+        $doc = $(document);
+        $doc.on('click', this.config.settingsForm.startButton, $.proxy(this.playLife, this));
+        $doc.on('click', this.config.settingsForm.resetButton, this.resetLife);
     },
 
     getGridSettings: function () {
@@ -33,18 +49,44 @@ var GameOfLife = {
 
             console.log('Failed : getGridSettings');
         })
+    },
 
+    playLife: function () {
+
+        var $button = $(this.config.settingsForm.startButton);
+
+
+        if ($button.data('state') == '0') {
+            $button.data('state', '1');
+            $button.text('Stop!');
+            this.config.isToStop = false;
+            this.getDataFromServer();
+        }
+        else {
+            $button.data('state', '0');
+            $button.text('Start!');
+            this.config.isToStop = true;
+        }
 
     },
 
+    resetLife: function () {
+        location.reload();
+    },
+
     getDataFromServer: function () {
-        var self = this;
+        var self = this,
+            form = self.config.settingsForm.id,
+            cells = self.config.settingsForm.cells
+        ;
+
+        $(cells).val(JSON.stringify(self.config.cells));
 
         $.ajax(
             {
                 type: 'POST',
                 url: 'Home/GetGenerationData',
-                data: { cells : JSON.stringify(self.config.cells) }
+                data: $(form).serialize()
             }
         )
         .done(function (response, textStatus, jqXHR) {
@@ -52,9 +94,11 @@ var GameOfLife = {
             self.config.cells = response;
             self.renderGrid();
 
-            if (self.config.intervalCounter < self.config.intervals) {
-                self.getDataFromServer();
-                self.config.intervalCounter += 1;
+            if (!self.config.isToStop) {
+                if (self.config.intervalCounter < self.config.intervals) {
+                    self.getDataFromServer();
+                    self.config.intervalCounter += 1;
+                }
             }
 
         })
@@ -76,6 +120,9 @@ var GameOfLife = {
         config.intervals = settings.interval;
         canvas.width = settings.maxWidth * config.grid.pixelSize;
         canvas.height = settings.maxHeight * config.grid.pixelSize;
+
+        this.renderGrid();
+
     },
 
     renderGrid: function() {
@@ -112,9 +159,11 @@ var GameOfLife = {
             context.stroke();
         }
 
-        $.each(this.config.cells, function () {
-           context.fillRect((this.X * grid.pixelSize), (this.Y  * grid.pixelSize), grid.pixelSize, grid.pixelSize);
-        });
+        if (this.config.cells != null) {
+            $.each(this.config.cells, function () {
+                context.fillRect((this.X * grid.pixelSize), (this.Y * grid.pixelSize), grid.pixelSize, grid.pixelSize);
+            });
+        }
 
         //context.restore();
     }
