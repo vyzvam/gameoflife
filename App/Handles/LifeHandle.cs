@@ -30,11 +30,13 @@ namespace App.Handles
             PrepareEnvironment();
         }
 
-        public void StartPopulation(IEnumerable<Cell> cells = null)
+        public void StartPopulation(int patternType = 0, IEnumerable<Cell> cells = null)
         {
             if (cells == null)
             {
-                cells = GridHandle.GetAcorn();
+                 if (patternType.Equals(0)) { cells = GridHandle.GetGlider(); }
+                else if (patternType.Equals(1)) { cells = GridHandle.GetDoubleGlider(); }
+                else { cells = GridHandle.GetAcorn(); }
             }
 
             GridHandle.Populate(life.CurrentGeneration, cells);
@@ -50,7 +52,7 @@ namespace App.Handles
         public void StartLifeCycle()
         {
             PrepareEnvironment();
-            StartPopulation(GridHandle.GetGlider());
+            StartPopulation();
             Evolve();
         }
 

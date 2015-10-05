@@ -1,5 +1,6 @@
 ﻿using App.Handles;
 using App.Models;
+using App.ViewModels;
 using MvcApplication1.Models;
 using System;
 using System.Collections.Generic;
@@ -9,54 +10,49 @@ using System.Web.Mvc;
 
 namespace App.Controllers
 {
-
-    //TODO: processing data in parallel
-    //TODO: include jquery
-    //TODO: javascript, create literal to contain settings, make ajax calls and draw canvas
-
     public class HomeController : Controller
     {
         LifeHandle LifeHandle;
+ 
         public HomeController()
         {
             LifeHandle = new LifeHandle();
         }
+        
         public ActionResult Index()
         {
-            return View();
+            return View(new SettingsViewModel());
         }
 
-        public JsonResult GetGridSettings()
+        public JsonResult GetGridSettings(SettingsViewModel settings)
         {
 
-            var settings = new LifeSettings
-            {
-                interval = LifeHandle.Interval,
-                maxHeight = LifeHandle.life.CurrentGeneration.MaxHeight,
-                maxWidth = LifeHandle.life.CurrentGeneration.MaxWidth
-            };
-
+            settings.interval = LifeHandle.Interval;
+            settings.maxHeight = LifeHandle.life.CurrentGeneration.MaxHeight;
+            settings.maxWidth = LifeHandle.life.CurrentGeneration.MaxWidth;
+            settings.patternTypes = null;
+            settings.Cells = null;
 
             return Json(settings);
         }
 
 
-        public JsonResult GetGenerationData(string cells)
+        public JsonResult GetGenerationData(SettingsViewModel settings)
         {
             LifeHandle.StartLife();
 
-            if (!string.IsNullOrEmpty(cells) && !cells.Equals("null"))
+            if (!string.IsNullOrEmpty(settings.Cells) && !settings.Cells.Equals("null"))
             {
-                string _cells = cells.Replace(@"\", string.Empty);
+                string _cells = settings.Cells.Replace(@"\", string.Empty);
                 var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
                 var liveCells = serializer.Deserialize<IEnumerable<Cell>>(_cells);
 
-                LifeHandle.StartPopulation(liveCells);
+                LifeHandle.StartPopulation(0, liveCells);
                 LifeHandle.AdvanceGeneration();
             }
             else
             {
-                LifeHandle.StartPopulation();
+                LifeHandle.StartPopulation(settings.patternTypeId);
             }
 
             var grid = LifeHandle.getCurrentGeneration();
